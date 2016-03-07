@@ -17,7 +17,7 @@ import re
 def getResp(url):
     session = requests.session()
     session.headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
-    session.proxies = {'http': 'http://127.0.0.1:10800', 'https': 'http://127.0.0.1:10800'}
+    session.proxies = {'http': 'http://127.0.0.1:8123', 'https': 'http://127.0.0.1:8123'}
     response = session.get(url)
     return response
 
@@ -63,13 +63,26 @@ def getTorrent(html):
         return m2[0]
     return "null"
 
+def getDate(html):
+    m2 = re.findall(r'发表于 ([\d\-]*) ', html)
+    if m2:
+        #print(m2[0])
+        return m2[0]
+    return "null"
+
 #分析每个帖子
-def doThread(threadid, basePath):
+def doThread(threadid, basePath, mmdate):
     fullurl = "http://sis001.com/forum/thread-" + threadid + "-1-1.html"
     #print(fullurl)
     r = getResp(fullurl)
     html = r.content.decode(encoding="gbk", errors="ignore")
 #    print(html)
+
+    #获取日期
+    mdate = getDate(html)
+    if mmdate == mdate:
+        print("Date match ..." + mdate)
+        return
 
     #获取标题
     #title = getTitle(html)
@@ -108,26 +121,26 @@ def doList(url):
         return m1
 
 #循环获取每个帖子
-def doMainList(lsturl, basePath):
+def doMainList(lsturl, basePath, mdate):
     rrr = doList(lsturl)
     for threadnum in rrr:
         print("=", end = '')
-        doThread(threadnum, basePath)
+        doThread(threadnum, basePath, mdate)
 
     print("|")
     return
 
 #循环所有列表页
-def exeMain(urllst, basePath):
+def exeMain(urllst, basePath, mdate):
     for url in urllst:
         print("Url:%s" %(url))
-        doMainList(url, basePath)
+        doMainList(url, basePath, mdate)
     return
 
 #saveToFile("http://i.imgur.com/o6SzpGV.jpg", "d:\\linshi\\python\\tmp\\")
-#doThread("9590393", "d:\\linshi\\python\\tmp\\")
+#doThread("9590393", "/home/cy/linshi/foo/", "2016-2-21")
 #rrr = doList("http://sis001.com/forum/forum-143-2.html")
-#doMainList("http://sis001.com/forum/forum-143-2.html", "d:\\linshi\\python\\tmp\\")
+#doMainList("http://sis001.com/forum/forum-143-2.html", "/home/cy/linshi/foo/")
 #print(rrr)
 
 urls=[]
@@ -136,13 +149,23 @@ urls.append("http://sis001.com/forum/forum-143-2.html")
 urls.append("http://sis001.com/forum/forum-143-3.html")
 urls.append("http://sis001.com/forum/forum-143-4.html")
 urls.append("http://sis001.com/forum/forum-143-5.html")
-#urls[5] = "http://sis001.com/forum/forum-143-6.html"
-#urls[6] = "http://sis001.com/forum/forum-143-7.html"
-#urls[7] = "http://sis001.com/forum/forum-143-8.html"
-#urls[8] = "http://sis001.com/forum/forum-143-9.html"
-#urls[9] = "http://sis001.com/forum/forum-143-10.html"
+urls.append("http://sis001.com/forum/forum-143-6.html")
+urls.append("http://sis001.com/forum/forum-143-7.html")
+urls.append("http://sis001.com/forum/forum-143-8.html")
+urls.append("http://sis001.com/forum/forum-143-9.html")
+urls.append("http://sis001.com/forum/forum-143-10.html")
+urls.append("http://sis001.com/forum/forum-143-11.html")
+urls.append("http://sis001.com/forum/forum-143-12.html")
+urls.append("http://sis001.com/forum/forum-143-13.html")
+urls.append("http://sis001.com/forum/forum-143-14.html")
+urls.append("http://sis001.com/forum/forum-143-15.html")
+urls.append("http://sis001.com/forum/forum-143-16.html")
+urls.append("http://sis001.com/forum/forum-143-17.html")
+urls.append("http://sis001.com/forum/forum-143-18.html")
+urls.append("http://sis001.com/forum/forum-143-19.html")
+urls.append("http://sis001.com/forum/forum-143-20.html")
 
-exeMain(urls, "d:\\linshi\\python\\h\\")
+exeMain(urls, "/home/cy/linshi/foo/", "2016-2-13")
 
 print("All done")
 
